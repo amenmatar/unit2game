@@ -1,0 +1,1139 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسابقة العلوم - الوحدة الثانية (تركيب المادة وخصائصها)</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --accent: #f1c40f;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --danger: #ef4444;
+            --info: #38bdf8;
+            --success: #2ecc71;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 950px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #334155;
+        }
+
+        .screen {
+            display: none;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .screen.active { display: block; }
+
+        h1 { color: var(--accent); font-size: 2.2rem; margin-bottom: 10px; }
+        h2 { color: #38bdf8; margin-bottom: 20px; }
+        p { font-size: 1.05rem; margin-bottom: 20px; color: #94a3b8; }
+
+        .official-header {
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 15px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .official-header .side-info {
+            font-size: 17px;
+            line-height: 1.8;
+            font-weight: bold;
+            color: #f8fafc;
+            text-align: right;
+        }
+
+        .official-header .side-info-left {
+            font-size: 17px;
+            line-height: 1.8;
+            font-weight: bold;
+            color: #f8fafc;
+            text-align: left;
+        }
+
+        .official-header .class-title {
+            color: var(--accent);
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .teacher-name { color: #38bdf8; font-weight: bold; }
+        .empty-center { flex-grow: 1; }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: right;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #475569;
+            background: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .form-control:focus { border-color: var(--primary); }
+
+        .role-cards {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .role-card {
+            background: #334155;
+            border: 3px solid #475569;
+            border-radius: 15px;
+            padding: 25px;
+            width: 220px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            background: #475569;
+        }
+
+        .color-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .color-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn.selected {
+            border-color: #fff;
+            transform: scale(1.2);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+            margin: 5px;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+        .btn-success { background: var(--success); box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); }
+        .btn-danger { background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+        .btn-secondary { background: #64748b; box-shadow: none; }
+        .btn-info { background: var(--info); }
+
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stage-card {
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stage-card:hover {
+            border-color: var(--accent);
+            background: #475569;
+            transform: scale(1.02);
+        }
+
+        .track-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background: #020617;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 2px solid #38bdf8;
+        }
+
+        canvas { width: 100%; height: 100%; }
+
+        .quiz-box {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #334155;
+        }
+
+        .stage-title { color: var(--accent); font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+        .question-text { font-size: 1.15rem; font-weight: bold; margin-bottom: 20px; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #334155;
+            color: white;
+            border: 2px solid #475569;
+            padding: 12px;
+            font-size: 0.95rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover { background: #475569; border-color: var(--info); }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .table-responsive {
+            max-height: 380px;
+            overflow-y: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid #475569;
+        }
+
+        table { width: 100%; border-collapse: collapse; background: #1e293b; font-size: 0.85rem; }
+        th, td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #334155; }
+        th { background: #0284c7; color: white; position: sticky; top: 0; }
+        tr:nth-child(even) { background: #0f172a; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .certificate-container {
+            background: #ffffff;
+            color: #1e293b;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 15px;
+            padding: 35px;
+            border: 8px double #f1c40f;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            position: relative;
+            text-align: center;
+        }
+
+        .cert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cert-header .right-head {
+            text-align: right;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .cert-header .left-head {
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .cert-title {
+            font-size: 2.2rem;
+            color: #0284c7;
+            font-weight: 900;
+            margin: 15px 0 10px 0;
+        }
+
+        .cert-subtitle {
+            font-size: 1.2rem;
+            color: #d97706;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .cert-body {
+            font-size: 1.15rem;
+            line-height: 2;
+            color: #334155;
+            margin: 25px 0;
+        }
+
+        .cert-student-name {
+            font-size: 1.8rem;
+            color: #d97706;
+            font-weight: bold;
+            text-decoration: underline;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .cert-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 2px dashed #cbd5e1;
+        }
+
+        .cert-sig {
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .cert-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            .modal-overlay, .certificate-container, .certificate-container * { visibility: visible; }
+            .modal-overlay {
+                position: absolute; left: 0; top: 0;
+                width: 100%; height: 100%;
+                background: #ffffff; padding: 0;
+            }
+            .certificate-container {
+                border: 6px double #d97706;
+                box-shadow: none; max-width: 100%; margin: 0;
+            }
+            .cert-actions { display: none !important; }
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .role-cards { flex-direction: column; align-items: center; }
+            .official-header { flex-direction: column; text-align: center; gap: 15px; }
+            .official-header .side-info, .official-header .side-info-left { text-align: center; }
+            .cert-header { flex-direction: column; gap: 10px; text-align: center; }
+            .cert-header .right-head, .cert-header .left-head { text-align: center; }
+            .cert-footer { flex-direction: column; align-items: center; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+
+    <!-- 1. الشاشة الرئيسية -->
+    <div id="role-screen" class="screen active">
+        <div class="official-header">
+            <div class="side-info">
+                <div>دولة فلسطين</div>
+                <div>وزارة التربية والتعليم العالي</div>
+                <div>مديرية التربية والتعليم / طوباس</div>
+                <div>مدرسة ذكور طمون الأساسية العليا</div>
+            </div>
+            
+            <div class="empty-center"></div>
+
+            <div class="side-info-left">
+                <div class="class-title">الصف: السادس الأساسي</div>
+                <div>المادة: العلوم والحياة</div>
+                <div class="teacher-name">معلم المادة: أ. أمين عبدالرازق</div>
+            </div>
+        </div>
+
+        <h1>مسابقة العلوم الإلكترونية 🧪⚡</h1>
+        <p>الوحدة الثانية: تركيب المادة وخصائصها</p>
+
+        <div class="role-cards">
+            <div class="role-card" onclick="goToStudentLogin()">
+                <div style="font-size: 3rem;">👨‍🎓</div>
+                <h3>دخول الطالب</h3>
+            </div>
+            <div class="role-card" onclick="goToTeacherLogin()">
+                <div style="font-size: 3rem;">👨‍🏫</div>
+                <h3>دخول المعلم</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. دخول الطالب -->
+    <div id="student-login-screen" class="screen">
+        <h2>تسجيل بيانات الطالب 📝</h2>
+        <div class="form-group">
+            <label>الاسم الثلاثي:</label>
+            <input type="text" id="student-name" class="form-control" placeholder="أدخل اسمك الثلاثي">
+        </div>
+        <div class="form-group">
+            <label>الصف:</label>
+            <input type="text" id="student-grade" class="form-control" value="السادس" placeholder="مثال: السادس">
+        </div>
+        <div class="form-group">
+            <label>الشعبة / الفصل:</label>
+            <input type="text" id="student-class" class="form-control" placeholder="مثال: أ أو ب">
+        </div>
+        <div class="form-group">
+            <label>اختر لون سفينتك الفضائية:</label>
+            <div class="color-selector">
+                <div class="color-btn selected" style="background: #38bdf8;" onclick="selectColor('#38bdf8', this)"></div>
+                <div class="color-btn" style="background: #f1c40f;" onclick="selectColor('#f1c40f', this)"></div>
+                <div class="color-btn" style="background: #ef4444;" onclick="selectColor('#ef4444', this)"></div>
+                <div class="color-btn" style="background: #2ecc71;" onclick="selectColor('#2ecc71', this)"></div>
+            </div>
+        </div>
+        <button class="btn" onclick="proceedToStageSelect()">اختيار دروس الوحدة الثانية 🚀</button>
+        <button class="btn btn-secondary" onclick="showScreen('role-screen')">رجوع</button>
+    </div>
+
+    <!-- 3. اختيار دروس الوحدة الثانية -->
+    <div id="stage-select-screen" class="screen">
+        <h2>دروس الوحدة الثانية: تركيب المادة وخصائصها ⚗️</h2>
+        <p>حدد الدرس الذي تريد الإجابة عنه:</p>
+        <div class="stages-grid">
+            <div class="stage-card" onclick="startSelectedStage(1)">
+                <h3>الدرس 1</h3>
+                <p>تركيب المادة (الذرة، الجزيء، العناصر والمركبات)</p>
+            </div>
+            <div class="stage-card" onclick="startSelectedStage(2)">
+                <h3>الدرس 2</h3>
+                <p>الرموز الكيميائية للعناصر ووفرتها في الطبيعة</p>
+            </div>
+            <div class="stage-card" onclick="startSelectedStage(3)">
+                <h3>الدرس 3</h3>
+                <p>الخصائص الفيزيائية والكيميائية للعناصر</p>
+            </div>
+            <div class="stage-card" onclick="startSelectedStage(4)">
+                <h3>الدرس 4</h3>
+                <p>الفلزات واللافلزات واستخداماتها</p>
+            </div>
+            <div class="stage-card" onclick="startSelectedStage(5)">
+                <h3>الدرس 5</h3>
+                <p>اختبار المراجعة الشاملة للوحدة الثانية</p>
+            </div>
+        </div>
+        <button class="btn btn-secondary" onclick="showScreen('student-login-screen')">رجوع لبيانات الطالب</button>
+    </div>
+
+    <!-- 4. دخول المعلم -->
+    <div id="teacher-login-screen" class="screen">
+        <h2>دخول المعلم 🔐</h2>
+        <div class="form-group">
+            <label>البريد الإلكتروني:</label>
+            <input type="email" id="teacher-email" class="form-control" placeholder="أدخل البريد الإلكتروني">
+        </div>
+        <div class="form-group">
+            <label>كلمة السر:</label>
+            <input type="password" id="teacher-pass" class="form-control" placeholder="أدخل كلمة السر">
+        </div>
+        <button class="btn" onclick="loginTeacher()">دخول لوحة التحكم 📊</button>
+        <button class="btn btn-info" onclick="resetTeacherPassword()">استعادة كلمة السر 📧</button>
+        <button class="btn btn-secondary" onclick="showScreen('role-screen')">رجوع</button>
+    </div>
+
+    <!-- 5. لوحة المعلم -->
+    <div id="teacher-dashboard-screen" class="screen">
+        <h2>لوحة المعلم - نتائج الوحدة الثانية 📈</h2>
+        <div style="margin-bottom: 15px;">
+            <button class="btn" onclick="exportToExcel()">تصدير إكسل 📥</button>
+            <button class="btn btn-info" onclick="setupTeacherAccount()">إعدادات البريد وكلمة السر ⚙️</button>
+            <button class="btn btn-danger" onclick="clearData()">مسح السجلات 🗑️</button>
+            <button class="btn btn-secondary" onclick="showScreen('role-screen')">تسجيل خروج</button>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم الثلاثي</th>
+                        <th>الصف</th>
+                        <th>الشعبة</th>
+                        <th>الدرس 1</th>
+                        <th>الدرس 2</th>
+                        <th>الدرس 3</th>
+                        <th>الدرس 4</th>
+                        <th>الدرس 5</th>
+                        <th>المجموع</th>
+                        <th>الشهادة</th>
+                        <th>التاريخ والوقت</th>
+                    </tr>
+                </thead>
+                <tbody id="results-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 6. نهاية الدرس/الاستراحة -->
+    <div id="stage-break-screen" class="screen">
+        <h2>🎉 ممتاز! أنهيت أسئلة هذا الدرس بنجاح 🎉</h2>
+        <p>تم حفظ درجتك بنجاح في لوحة المعلم للوحدة الثانية.</p>
+        <div style="font-size: 1.2rem; margin: 20px 0;">
+            <p>النقاط المحققة: <span id="break-stage-score" style="color:var(--accent); font-weight:bold;">0</span></p>
+        </div>
+        <button class="btn btn-success" id="cert-btn-break" onclick="openCertificateModal()" style="display:none;">🎓 استعراض وطباعة شهادة التقدير</button>
+        <button class="btn" onclick="showScreen('stage-select-screen')">اختر درساً آخر 🧭</button>
+        <button class="btn btn-info" onclick="showScreen('role-screen')">العودة للرئيسية 🏠</button>
+    </div>
+
+    <!-- 7. شاشة اللعب -->
+    <div id="game-screen" class="screen">
+        <div class="hud">
+            <div>الطالب: <span id="hud-student-name" style="color:var(--accent)">-</span></div>
+            <div>السؤال: <span id="progress-text">0/0</span></div>
+            <div>النقاط: <span id="score-text">0</span></div>
+        </div>
+
+        <div class="track-container">
+            <canvas id="raceCanvas"></canvas>
+        </div>
+
+        <div class="quiz-box">
+            <div id="stage-title" class="stage-title">الوحدة الثانية: تركيب المادة وخصائصها</div>
+            <div id="question" class="question-text">جاري إعداد السؤال...</div>
+            <div id="options" class="options-grid"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 8. النافذة المنبثقة لشهادة التقدير الإلكترونية -->
+<div id="certificate-modal" class="modal-overlay">
+    <div class="certificate-container">
+        <div class="cert-header">
+            <div class="right-head">
+                <div>دولة فلسطين</div>
+                <div>وزارة التربية والتعليم العالي</div>
+                <div>مديرية التربية والتعليم / طوباس</div>
+                <div>مدرسة ذكور طمون الأساسية العليا</div>
+            </div>
+            <div class="left-head">
+                <div>الصف: <span id="cert-student-grade">السادس</span></div>
+                <div>المادة: العلوم والحياة</div>
+                <div>الوحدة الثانية: تركيب المادة وخصائصها</div>
+            </div>
+        </div>
+
+        <div class="cert-title">شهادة تقدير وتفوق 🎓</div>
+        <div class="cert-subtitle">وسام التميز والإبداع في مادة العلوم والحياة</div>
+
+        <div class="cert-body">
+            تتقدم إدارة مدرسة ذكور طمون الأساسية العليا ومعلم المادة بأجمل عبارات التهاني والتبريكات للطالب المبدع:
+            <br>
+            <span class="cert-student-name" id="cert-student-fullname">اسم الطالب الثلاثي</span>
+            <br>
+            من الصف (<span id="cert-student-class-display">السادس أ</span>)، وذلك لتفوقه الباهر وإنجازه المتميز في مسابقة العلوم الإلكترونية (الوحدة الثانية: تركيب المادة وخصائصها) ومحققه لمجموع نقاط (<span id="cert-student-score" style="color:#d97706; font-weight:bold;">0</span>) نقطة.
+        </div>
+
+        <div class="cert-footer">
+            <div class="cert-sig">
+                <div>معلم المادة:</div>
+                <div style="color:#0284c7; margin-top:5px;">أ. أمين عبدالرازق</div>
+            </div>
+            <div class="cert-sig" style="font-size: 13px; color: #64748b;">
+                <div>تاريخ الإنجاز:</div>
+                <div id="cert-date-display" style="margin-top:5px;">2026/09/28</div>
+            </div>
+            <div class="cert-sig">
+                <div>مدير المدرسة:</div>
+                <div style="color:#0284c7; margin-top:5px;">أ. مصطفى بشارات</div>
+            </div>
+        </div>
+
+        <div class="cert-actions">
+            <button class="btn btn-success" onclick="window.print()">🖨️ طباعة الشهادة / حفظ PDF</button>
+            <button class="btn btn-success" style="background:#25D366; border-color:#25D366;" onclick="shareOnWhatsApp()">📲 مشاركة عبر واتساب</button>
+            <button class="btn btn-secondary" onclick="closeCertificateModal()">إغلاق النافذة ✖️</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let teacherCreds = JSON.parse(localStorage.getItem('teacherCreds_unit2')) || {
+        email: "ameenmatar@gmail.com",
+        password: "admin"
+    };
+
+    let currentStudent = { name: '', grade: 'السادس', classGroup: '', color: '#38bdf8' };
+    let currentStageNum = 1;
+    let stageQuestions = [];
+    let currentStageIndex = 0;
+    let stageScore = 0;
+    
+    let shipY = 90;
+    let shipX = 50;
+    let stars = [];
+
+    const canvas = document.getElementById('raceCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function initStars() {
+        stars = [];
+        for(let i = 0; i < 50; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 3 + 1
+            });
+        }
+    }
+
+    function resizeCanvas() {
+        if(canvas && canvas.parentElement) {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            initStars();
+        }
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const targetScreen = document.getElementById(screenId);
+        if(targetScreen) { targetScreen.classList.add('active'); }
+    }
+
+    function goToStudentLogin() { showScreen('student-login-screen'); }
+    function goToTeacherLogin() { showScreen('teacher-login-screen'); }
+
+    function selectColor(color, el) {
+        currentStudent.color = color;
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function loginTeacher() {
+        const email = document.getElementById('teacher-email').value.trim();
+        const pass = document.getElementById('teacher-pass').value.trim();
+
+        if (email === teacherCreds.email && pass === teacherCreds.password) {
+            renderTeacherTable();
+            showScreen('teacher-dashboard-screen');
+        } else {
+            alert("بيانات الدخول غير صحيحة!");
+        }
+    }
+
+    function resetTeacherPassword() {
+        const email = prompt("أدخل بريدك الإلكتروني المسجل:");
+        if (email && email.trim() === teacherCreds.email) {
+            alert(`كلمة السر الخاصة بك هي: ${teacherCreds.password}`);
+        } else {
+            alert("البريد الإلكتروني غير مطابق!");
+        }
+    }
+
+    function setupTeacherAccount() {
+        const newEmail = prompt("أدخل بريدك الجديد:", teacherCreds.email);
+        const newPass = prompt("أدخل كلمة السر الجديدة:", teacherCreds.password);
+
+        if (newEmail && newPass) {
+            teacherCreds.email = newEmail.trim();
+            teacherCreds.password = newPass.trim();
+            localStorage.setItem('teacherCreds_unit2', JSON.stringify(teacherCreds));
+            alert("تم التحديث بنجاح!");
+        }
+    }
+
+    function proceedToStageSelect() {
+        const name = document.getElementById('student-name').value.trim();
+        const grade = document.getElementById('student-grade').value.trim();
+        const classGroup = document.getElementById('student-class').value.trim();
+
+        if (!name || !classGroup || !grade) {
+            alert("يرجى إكمال جميع بيانات الطالب أولاً!");
+            return;
+        }
+
+        currentStudent.name = name;
+        currentStudent.grade = grade;
+        currentStudent.classGroup = classGroup;
+        showScreen('stage-select-screen');
+    }
+
+    function shuffleQuestions(questions) {
+        return questions.map(q => {
+            let optionsWithIndex = q.options.map((opt, idx) => ({
+                text: opt,
+                isCorrect: idx === q.answer
+            }));
+            
+            for (let i = optionsWithIndex.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
+            }
+
+            const newOptions = optionsWithIndex.map(o => o.text);
+            const newAnswer = optionsWithIndex.findIndex(o => o.isCorrect);
+
+            return { ...q, options: newOptions, answer: newAnswer };
+        });
+    }
+
+    function startSelectedStage(stageNum) {
+        currentStageNum = stageNum;
+        let filtered = unitTwoQuestions.filter(q => q.stageNum === stageNum);
+        
+        stageQuestions = shuffleQuestions(filtered);
+        
+        currentStageIndex = 0;
+        stageScore = 0;
+        
+        showScreen('game-screen');
+        resizeCanvas();
+        shipX = 50;
+        shipY = canvas.height / 2;
+
+        document.getElementById('hud-student-name').innerText = `${currentStudent.name} (${currentStudent.grade} - ${currentStudent.classGroup})`;
+        showQuestion();
+        requestAnimationFrame(gameLoop);
+    }
+
+    function showQuestion() {
+        if (currentStageIndex >= stageQuestions.length) {
+            saveStageResult();
+            document.getElementById('break-stage-score').innerText = stageScore;
+            
+            document.getElementById('cert-btn-break').style.display = 'inline-block';
+            showScreen('stage-break-screen');
+            return;
+        }
+
+        const q = stageQuestions[currentStageIndex];
+        document.getElementById('stage-title').innerText = q.stage;
+        document.getElementById('question').innerText = q.q;
+
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(idx);
+            optionsContainer.appendChild(btn);
+        });
+
+        document.getElementById('progress-text').innerText = `${currentStageIndex + 1}/${stageQuestions.length}`;
+        document.getElementById('score-text').innerText = stageScore;
+    }
+
+    function checkAnswer(selectedIndex) {
+        const q = stageQuestions[currentStageIndex];
+        if (selectedIndex === q.answer) {
+            stageScore += 100;
+            const step = (canvas.width - 100) / stageQuestions.length;
+            shipX += step;
+        }
+
+        currentStageIndex++;
+        showQuestion();
+    }
+
+    function calculateTotalScore(r) {
+        let sum = 0;
+        for (let i = 1; i <= 5; i++) {
+            let val = r[`stage${i}`];
+            if (typeof val === 'number') { sum += val; }
+        }
+        return sum;
+    }
+
+    function getCurrentDateTime() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG');
+        const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        return `${dateStr} - ${timeStr}`;
+    }
+
+    function saveStageResult() {
+        let results = JSON.parse(localStorage.getItem('unitTwoResults') || '[]');
+        let studentIndex = results.findIndex(r => r.name === currentStudent.name && r.classGroup === currentStudent.classGroup);
+
+        let existing = studentIndex !== -1 ? results[studentIndex] : {};
+
+        let updatedRecord = {
+            name: currentStudent.name,
+            grade: currentStudent.grade || 'السادس',
+            classGroup: currentStudent.classGroup,
+            stage1: existing.stage1 !== undefined ? existing.stage1 : '-',
+            stage2: existing.stage2 !== undefined ? existing.stage2 : '-',
+            stage3: existing.stage3 !== undefined ? existing.stage3 : '-',
+            stage4: existing.stage4 !== undefined ? existing.stage4 : '-',
+            stage5: existing.stage5 !== undefined ? existing.stage5 : '-',
+            dateTime: getCurrentDateTime()
+        };
+
+        updatedRecord[`stage${currentStageNum}`] = stageScore;
+
+        if (studentIndex !== -1) {
+            results[studentIndex] = updatedRecord;
+        } else {
+            results.push(updatedRecord);
+        }
+
+        localStorage.setItem('unitTwoResults', JSON.stringify(results));
+    }
+
+    function openCertificateModal(studentData = null) {
+        let name = currentStudent.name;
+        let grade = currentStudent.grade || 'السادس';
+        let classGroup = currentStudent.classGroup;
+        let score = 0;
+        let dateTime = new Date().toLocaleDateString('ar-EG');
+
+        if (studentData) {
+            name = studentData.name;
+            grade = studentData.grade || 'السادس';
+            classGroup = studentData.classGroup;
+            score = calculateTotalScore(studentData);
+            dateTime = studentData.dateTime || studentData.date || dateTime;
+        } else {
+            let results = JSON.parse(localStorage.getItem('unitTwoResults') || '[]');
+            let rec = results.find(r => r.name === name && r.classGroup === classGroup);
+            if (rec) {
+                score = calculateTotalScore(rec);
+                dateTime = rec.dateTime || rec.date || dateTime;
+            } else {
+                score = stageScore;
+            }
+        }
+
+        document.getElementById('cert-student-fullname').innerText = name || "طالب متميز";
+        document.getElementById('cert-student-grade').innerText = grade;
+        document.getElementById('cert-student-class-display').innerText = `${grade} / ${classGroup}`;
+        document.getElementById('cert-student-score').innerText = score;
+        document.getElementById('cert-date-display').innerText = dateTime;
+
+        document.getElementById('certificate-modal').classList.add('active');
+    }
+
+    function closeCertificateModal() {
+        document.getElementById('certificate-modal').classList.remove('active');
+    }
+
+    function shareOnWhatsApp() {
+        const name = document.getElementById('cert-student-fullname').innerText;
+        const classGroup = document.getElementById('cert-student-class-display').innerText;
+        const score = document.getElementById('cert-student-score').innerText;
+        const gameUrl = window.location.href;
+
+        const message = `🎓 *شهادة تقدير وتفوق - مسابقة العلوم* 🧪\n\nيسرنا تهنئة الطالب المبدع: *${name}*\nالصف: *${classGroup}*\nلحصوله على علامة متميزة قدرها: *${score} نقطة* في مسابقة العلوم (الوحدة الثانية: تركيب المادة وخصائصها).\n\nمدرسة ذكور طمون الأساسية العليا\nمعلم المادة: أ. أمين عبدالرازق\n\nرابط اللعبة للتحدي:\n${gameUrl}`;
+        
+        const encodedMsg = encodeURIComponent(message);
+        window.open(`https://api.whatsapp.com/send?text=${encodedMsg}`, '_blank');
+    }
+
+    function renderTeacherTable() {
+        const tbody = document.getElementById('results-table-body');
+        tbody.innerHTML = '';
+        let results = JSON.parse(localStorage.getItem('unitTwoResults') || '[]');
+
+        if (results.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="12">لا توجد نتائج مسجلة لدروس الوحدة الثانية حتى الآن</td></tr>';
+            return;
+        }
+
+        results.forEach((r, idx) => {
+            const total = calculateTotalScore(r);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${idx + 1}</td>
+                <td><strong>${r.name}</strong></td>
+                <td>${r.grade || 'السادس'}</td>
+                <td>${r.classGroup}</td>
+                <td>${r.stage1 !== undefined ? r.stage1 : '-'}</td>
+                <td>${r.stage2 !== undefined ? r.stage2 : '-'}</td>
+                <td>${r.stage3 !== undefined ? r.stage3 : '-'}</td>
+                <td>${r.stage4 !== undefined ? r.stage4 : '-'}</td>
+                <td>${r.stage5 !== undefined ? r.stage5 : '-'}</td>
+                <td style="color:var(--accent); font-weight:bold;">${total}</td>
+                <td>
+                    <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.8rem;" onclick='openCertForRecord(${JSON.stringify(r)})'>🎓 الشهادة</button>
+                </td>
+                <td>${r.dateTime || r.date || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function openCertForRecord(record) {
+        openCertificateModal(record);
+    }
+
+    function exportToExcel() {
+        let results = JSON.parse(localStorage.getItem('unitTwoResults') || '[]');
+        if (results.length === 0) {
+            alert("لا توجد بيانات للتصدير!");
+            return;
+        }
+
+        let tableRows = '';
+        results.forEach((r, index) => {
+            const total = calculateTotalScore(r);
+            tableRows += `
+                <tr>
+                    <td style="text-align: center;">${index + 1}</td>
+                    <td style="text-align: right;">${r.name}</td>
+                    <td style="text-align: center;">${r.grade || 'السادس'}</td>
+                    <td style="text-align: center;">${r.classGroup}</td>
+                    <td style="text-align: center;">${r.stage1 !== undefined ? r.stage1 : '-'}</td>
+                    <td style="text-align: center;">${r.stage2 !== undefined ? r.stage2 : '-'}</td>
+                    <td style="text-align: center;">${r.stage3 !== undefined ? r.stage3 : '-'}</td>
+                    <td style="text-align: center;">${r.stage4 !== undefined ? r.stage4 : '-'}</td>
+                    <td style="text-align: center;">${r.stage5 !== undefined ? r.stage5 : '-'}</td>
+                    <td style="text-align: center; font-weight: bold; background-color: #f1c40f; color: #000;">${total}</td>
+                    <td style="text-align: center;">${r.dateTime || r.date || '-'}</td>
+                </tr>
+            `;
+        });
+
+        const excelTemplate = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>
+                <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>نتائج الوحدة الثانية</x:Name>
+                                <x:WorksheetOptions>
+                                    <x:DisplayRightToLeft/>
+                                </x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+                <![endif]-->
+            </head>
+            <body dir="rtl">
+                <table border="1">
+                    <thead>
+                        <tr style="background-color: #0284c7; color: #ffffff; font-weight: bold;">
+                            <th>#</th>
+                            <th>الاسم الثلاثي</th>
+                            <th>الصف</th>
+                            <th>الشعبة</th>
+                            <th>الدرس 1</th>
+                            <th>الدرس 2</th>
+                            <th>الدرس 3</th>
+                            <th>الدرس 4</th>
+                            <th>الدرس 5</th>
+                            <th>المجموع</th>
+                            <th>التاريخ والوقت</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        const blob = new Blob([excelTemplate], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `نتائج_الصف_السادس_الوحدة_الثانية_${new Date().toLocaleDateString('ar-EG')}.xls`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function clearData() {
+        if (confirm("هل أنت متأكد من مسح جميع سجلات الوحدة الثانية؟")) {
+            localStorage.removeItem('unitTwoResults');
+            renderTeacherTable();
+        }
+    }
+
+    function drawSpaceTrack() {
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#ffffff';
+        stars.forEach(s => {
+            s.x -= s.speed;
+            if(s.x < 0) s.x = canvas.width;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        const portalX = canvas.width - 40;
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.ellipse(portalX, canvas.height/2, 15, canvas.height/2 - 10, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(shipX, canvas.height / 2);
+        
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath();
+        ctx.moveTo(-15, 0);
+        ctx.lineTo(-25, -6);
+        ctx.lineTo(-25, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = currentStudent.color;
+        ctx.beginPath();
+        ctx.moveTo(20, 0);
+        ctx.lineTo(-15, -12);
+        ctx.lineTo(-10, 0);
+        ctx.lineTo(-15, 12);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(3, 0, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function gameLoop() {
+        drawSpaceTrack();
+        if (document.getElementById('game-screen').classList.contains('active')) {
+            requestAnimationFrame(gameLoop);
+        }
+    }
+
+    // بنك أسئلة الوحدة الثانية: تركيب المادة وخصائصها - الصف السادس الأساسي
+    const unitTwoQuestions = [
+        // الدرس 1: تركيب المادة (الذرة، الجزيء، العناصر والمركبات)
+        { stageNum: 1, stage: "الدرس 1: تركيب المادة", q: "1. أصغر جزء في المادة وتحمل صفاتها وتعد وحدة بناء المادة هي:", options: ["الذرة", "الجزيء", "المخلوط", "المركب"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: تركيب المادة", q: "2. الفيلسوف اليوناني الذي اعتقد أن المادة تتكون من دقائق غير قابلة للتجزئة وسماها ذرات هو:", options: ["ديموقراط", "أرسطو", "مندل", "نيوتن"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: تركيب المادة", q: "3. المادة النقية التي تتكون من نوع واحد فقط من الذرات هي:", options: ["العنصر", "المركب", "المخلوط المتجانس", "المحلول"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: تركيب المادة", q: "4. المادة النقية الناتجة عن اتحاد عنصرين مختلفين أو أكثر بنسب وزنية ثابتة هي:", options: ["المركب", "العنصر", "المخلوط غير المتجانس", "الذرة"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: تركيب المادة", q: "5. اتحاد ذرة كربون مع ذرتي أكسجين ينتج جزيء مركب يسمى:", options: ["ثاني أكسيد الكربون", "الماء", "كبريتيد الحديد", "السكر"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: تركيب المادة", q: "6. دقيقة متكونة من ذرتين أو أكثر مرتبطة معاً تسمى:", options: ["الجزيء", "النواة", "الإلكترون", "المخلوط"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: تركيب المادة", q: "7. أي مما يأتي يُعد مثالاً على عنصر نقّي؟", options: ["النحاس", "الماء", "السكر", "ملح الطعام"], answer: 0 },
+        { stageNum: 1, stage: "الدرس 1: تركيب المادة", q: "8. أي مما يأتي يُعد مثالاً على مركب كيميائي؟", options: ["الماء (H2O)", "الحديد", "الأكسجين", "الذهب"], answer: 0 },
+
+        // الدرس 2: الرموز الكيميائية للعناصر ووفرتها
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "1. الرمز الكيميائي لعنصر الحديد (Ferrum) هو:", options: ["Fe", "Fi", "F", "Fr"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "2. الرمز الكيميائي لعنصر النحاس (Cuprum) هو:", options: ["Cu", "Ca", "Na", "C"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "3. الرمز الكيميائي لعنصر الكبريت (Sulfur) هو:", options: ["S", "So", "Si", "Sr"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "4. الرمز الكيميائي لعنصر الصوديوم (Natrium) هو:", options: ["Na", "So", "S", "N"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "5. الرمز الكيميائي لعنصر البوتاسيوم (Kalium) هو:", options: ["K", "P", "Po", "Pt"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "6. الرمز الكيميائي لعنصر الكلور هو:", options: ["Cl", "C", "Cr", "Co"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "7. العنصر الأكثر وفرة ويشكل نحو نصف القشرة الأرضية (47.3%) هو:", options: ["الأكسجين", "السيليكون", "الألومنيوم", "الحديد"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "8. العنصر الذي يحتل المرتبة الثانية من حيث الوفرة في القشرة الأرضية (27.7%) هو:", options: ["السيليكون", "الأكسجين", "الحديد", "النحاس"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "9. الغاز الذي يشكل النسبة الأكبر في الهواء الجوي (78%) هو:", options: ["النيتروجين", "الأكسجين", "الهيدروجين", "ثاني أكسيد الكربون"], answer: 0 },
+        { stageNum: 2, stage: "الدرس 2: الرموز الكيميائية للعناصر", q: "10. يشكل غاز الأكسجين في الهواء الجوي نسبة مقدارها حوالي:", options: ["21%", "78%", "50%", "1%"], answer: 0 },
+
+        // الدرس 3: الخصائص الفيزيائية والكيميائية للعناصر
+        { stageNum: 3, stage: "الدرس 3: الخصائص الفيزيائية والكيميائية", q: "1. الفلز الوحيد الذي يوجد في الحالة السائلة في الظروف الطبيعية هو:", options: ["الزئبق", "الحديد", "النحاس", "الألومنيوم"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الخصائص الفيزيائية والكيميائية", q: "2. يُحفظ عنصرا الصوديوم والبوتاسيوم في المختبر تحت الكاز بسبب:", options: ["شدة تفاعلهما السريع مع الهواء والماء", "لأنهما يذوبان بالماء", "لتغيير لونهما", "لمنع تبخرهما"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الخصائص الفيزيائية والكيميائية", q: "3. العنصر القابل للمغنطة والانجذاب نحو المغناطيس هو:", options: ["الحديد", "النحاس", "الألومنيوم", "الكبريت"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الخصائص الفيزيائية والكيميائية", q: "4. التغير الذي ينتج عنه مادة جديدة يختلف تركيبها عن المادة الأصلية هو:", options: ["التغير الكيميائي", "التغير الفيزيائي", "الانصهار", "التبخر"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الخصائص الفيزيائية والكيميائية", q: "5. أي مما يأتي يُعد مثالاً على تغير كيميائي للمادة؟", options: ["صدأ الحديد", "انصهار الشمع", "تقطيع الخشب", "تبخر الكحول"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الخصائص الفيزيائية والكيميائية", q: "6. أي مما يأتي يُعد مثالاً على تغير فيزيائي (طبيعي) للمادة؟", options: ["انصهار الجليد", "خبز الكعك", "تعفن الفاكهة", "صدأ السيارات"], answer: 0 },
+        { stageNum: 3, stage: "الدرس 3: الخصائص الفيزيائية والكيميائية", q: "7. يُوصى بعدم خلط المنظفات المنزلية مع مركبات الكلور لأن ذلك ينتج:", options: ["غازات سامة وضارة بالصحة", "ماء نقي", "مواد صلبة مفيدة", "حرارة برودة سريعة"], answer: 0 },
+
+        // الدرس 4: الفلزات واللافلزات
+        { stageNum: 4, stage: "الدرس 4: الفلزات واللافلزات", q: "1. من أهم صفات الفلزات أنها:", options: ["لامعة وموصلة للكهرباء والحرارة وقابلة للطرق", "هشة وغير موصلة", "جميعها غازات", "لا تلمع ولا تتشكل"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفلزات واللافلزات", q: "2. عنصر لا فلزي صلب ولكنه موصل جيد للتيار الكهربائي ويستخدم في أقلام الرصاص والبطاريات هو:", options: ["الجرافيت (الكربون)", "الكبريت", "الفسفور", "الزئبق"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفلزات واللافلزات", q: "3. عنصر لا فلزي هش أصفر اللون ولا يوصل الكهرباء هو:", options: ["الكبريت", "النحاس", "الألومنيوم", "الحديد"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفلزات واللافلزات", q: "4. يُستخدم عنصر النحاس في صنع أسلاك الكهرباء بسبب:", options: ["جودة توصيله للكهرباء وقابليته للسحب", "لأنه هش جداً", "لأنه عازل للكهرباء", "لأنه غاز خفيف"], answer: 0 },
+        { stageNum: 4, stage: "الدرس 4: الفلزات واللافلزات", q: "5. يُستخدم عنصر الألومنيوم في صنع هياكل الطائرات وأواني الطهي لأنه:", options: ["خفيف الوزن وموصل جيد للحرارة ومقاوم للتآكل", "ثقيل جداً", "ينكسر بسهولة", "غاز لا لون له"], answer: 0 },
+
+        // الدرس 5: اختبار المراجعة الشاملة للوحدة الثانية
+        { stageNum: 5, stage: "الدرس 5: مراجعة الوحدة الثانية", q: "1. أي من المواد الآتية يتكون من نوع واحد من الذرات؟", options: ["عنصر الفضة", "مركب الماء", "مخلوط العصير", "مركب السكر"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: مراجعة الوحدة الثانية", q: "2. عنصر الكربون يُرمز له بالرمز C، بينما عنصر الكالسيوم يُرمز له بالرمز Ca لـ:", options: ["تجنب التشابه بينهما في الرمز", "لأن الكالسيوم أثقل", "لأن الكربون غاز", "بدون سبب"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: مراجعة الوحدة الثانية", q: "3. الرمز الكيميائي O يمثل عنصر:", options: ["الأكسجين", "النيتروجين", "الهيدروجين", "الحديد"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: مراجعة الوحدة الثانية", q: "4. احتراق شريط المغنيسيوم وينتج عنه مسحوق أبيض يسمى أكسيد المغنيسيوم يُعد تغيراً:", options: ["كيميائياً", "فيزيائياً", "ميكانيكياً", "مؤقتاً"], answer: 0 },
+        { stageNum: 5, stage: "الدرس 5: مراجعة الوحدة الثانية", q: "5. من الأمثلة على اللافلز السائل في الظروف الطبيعية عنصر:", options: ["البروم", "الزئبق", "الأكسجين", "الكلور"], answer: 0 }
+    ];
+</script>
+</body>
+</html>
